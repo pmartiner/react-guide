@@ -72,7 +72,9 @@ const app = props => {
       {/* Como aquí el componente no es una clase, sino una función, 
           no es necesario hablar del "this" */}
       <button onClick={ switchNameHandler } >Switch name</button>
-      <Person name={ personState.persons[0].name } age={ personState.persons[0].age }>
+      <Person 
+        name={ personState.persons[0].name } 
+        age={ personState.persons[0].age }>
         <ul>
           My hobbies are:
           <li>
@@ -83,7 +85,10 @@ const app = props => {
           </li>
         </ul>
       </Person>
-      <Person name={ personState.persons[1].name } age={ personState.persons[1].age } />
+      <Person 
+        name={ personState.persons[1].name } 
+        age={ personState.persons[1].age } 
+        click={ switchNameHandler }/>
     </div>
   );
 }
