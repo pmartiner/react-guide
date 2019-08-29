@@ -16,11 +16,12 @@ class App extends Component {
         name: "Hiromi",
         age: "17"
       }
-    ]
+    ],
+    showPersons: false
   }
 
   
-  // la convención de React dice que todos los métodos deben acabar con un Handler
+  // La convención de React dice que todos los métodos deben acabar con un Handler
   // cuando no lo llamas activamente, pero manejan un evento (como click, por ejemplo)
   switchNameHandler = (newName) => {
     console.log("was clicked");
@@ -75,6 +76,12 @@ class App extends Component {
     });
   }
 
+  togglePersonsHandler = () => {
+    this.setState({
+      showPersons: !this.state.showPersons
+    })
+  }
+
   // El DOM re-renderea el componente cada que cambia el estado
   render() {
 
@@ -93,6 +100,23 @@ class App extends Component {
       boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)"
     }
 
+    let persons = null;
+
+    if(this.state.showPersons) {
+      persons = (
+        <div>
+          { this.state.persons.map(person => {
+            return <Person 
+                    name={ person.name } 
+                    age={ person.age } 
+                    click={ this.switchNameHandler.bind(this, ["Eduardo", "Mariana"]) }
+                    changeName={ this.inputNameHandler } 
+                  />
+          }) }
+        </div>
+      );
+    }
+
     return (
       <div className="App">
         <header className="App-header">
@@ -101,56 +125,51 @@ class App extends Component {
         </header>
         {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
             mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
-        <button style={ style } onClick={ this.switchNameHandler.bind(this, ["Pablo", "Hiromi"]) } >Switch name</button>
-        {/* Puedes pasar métodos a otros elementos a través de props. Por ejemplo: click={ this.switchNameHandler }
+        <button style={ style } onClick={ this.togglePersonsHandler } >Toggle persons</button>
         
-            Cuando haces un this.switchName.bind(this), lo que dices es que al primer this (elemento que
-            contiene la función switchNameHandler), le vas a bindear otro this, que recibirá como parámetro.
-            Éste segundo this proviene de la función y se referirá a la clase, no al objeto.
-            
-            Cuando le pasas un segundo argumento (o más), le mandas el parámetro (o más, si hay) 
-            de la función al objeto sin estado. Por ejemplo: 
-            click = { this.switchNameHandler(this, newName[]) } 
-            
-            Ésta es la forma recomendada (la función anónima es ineficiente)*/}
-        <Person 
-          name={ this.state.persons[0].name } 
-          age={ this.state.persons[0].age } 
-          click={ this.switchNameHandler.bind(this, ["Eduardo", "Mariana"]) }
-          changeName={ this.inputNameHandler } 
-        >
-          <ul>
-            My hobbies are:
-            <li>
-              Programming
-            </li>
-            <li>
-              Gym
-            </li>
-          </ul>
-        </Person>
-        {/* Otra forma de mandar parámetros a través de métodos en props es con las arrow functions.
-            En las props, cuando usas una arrow function, siempre recives un event (e) aunque no tenga
-            parámetros la función, pues siempre puedes interactuar con los elementos del DOM. Si quieres
-            usarlo, tienes que hacer una declaración explícita del parámetro (ver inputNameHandler(event)).
-            
-            Cuando usas una arrow function (como aquí abajo), implícitamente lo siguiente a la flecha
-            es un return si están en la misma línea. Por ejemplo:
-            () => this.switchNameHandler(newName[]) es lo mismo que () => return this.switchNameHandler(newName[]) 
-            
-            Si quisieras que no estuviera en una misma línea, la alternativa es escribir el cuerpo de la 
-            función entre llaves {}, después de la flecha. Por ejemplo: 
-            () => { this.switchNameHandler(newName[]) } 
-            
-            Si le pasas una función anónima al prop, la ejecuta hasta que sucede el evento, a diferencia
-            de sólo mandarle la función pero con paréntesis.
-            () => this.switchNameHandler() != this.switchNameHandler() */}
-        <Person 
-          name={ this.state.persons[1].name } 
-          age={ this.state.persons[1].age } 
-          click={ () => this.switchNameHandler(["Pablo", "Hiromi"]) }
-          changeName={ this.inputNameHandler }
-        />
+          {/* Entre llaves se puede escribir JS, no solo elementos HTML-JSX */}
+
+          {/* JSX sólo acepta condicionales en forma ternaria entre llaves dentro del return del render():
+              condición ? verdadero : falso 
+              
+              En este caso, cuando es verdadero, pinta todo lo que está dentro del div.
+              Si es falso, no pinta nada (ver final del div) 
+              
+              Se llama React.createElement() si la condición es verdadera usando al 
+              div como padre */}
+          
+        <div>
+          {/* Puedes pasar métodos a otros elementos a través de props. Por ejemplo: click={ this.switchNameHandler }
+      
+              Cuando haces un this.switchName.bind(this), lo que dices es que al primer this (elemento que
+              contiene la función switchNameHandler), le vas a bindear otro this, que recibirá como parámetro.
+              Éste segundo this proviene de la función y se referirá a la clase, no al objeto.
+              
+              Cuando le pasas un segundo argumento (o más), le mandas el parámetro (o más, si hay) 
+              de la función al objeto sin estado. Por ejemplo: 
+              click = { this.switchNameHandler(this, newName[]) } 
+              
+              Ésta es la forma recomendada (la función anónima es ineficiente)*/}
+
+          {/* Otra forma de mandar parámetros a través de métodos en props es con las arrow functions.
+              En las props, cuando usas una arrow function, siempre recives un event (e) aunque no tenga
+              parámetros la función, pues siempre puedes interactuar con los elementos del DOM. Si quieres
+              usarlo, tienes que hacer una declaración explícita del parámetro (ver inputNameHandler(event)).
+              
+              Cuando usas una arrow function (como aquí abajo), implícitamente lo siguiente a la flecha
+              es un return si están en la misma línea. Por ejemplo:
+              () => this.switchNameHandler(newName[]) es lo mismo que () => return this.switchNameHandler(newName[]) 
+              
+              Si quisieras que no estuviera en una misma línea, la alternativa es escribir el cuerpo de la 
+              función entre llaves {}, después de la flecha. Por ejemplo: 
+              () => { this.switchNameHandler(newName[]) } 
+              
+              Si le pasas una función anónima al prop, la ejecuta hasta que sucede el evento, a diferencia
+              de sólo mandarle la función pero con paréntesis.
+              () => this.switchNameHandler() != this.switchNameHandler() */}
+
+          { persons }
+        </div>      
       </div>
     );
   }

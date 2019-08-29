@@ -6,6 +6,8 @@ import './Person.css';
 // Un componente sin estado puede ser una función simple, sin necesitar ser una clase
 const person = (props) => {
     return (
+        // Tiene que tener un wrapper porque, en el fondo, lo que hace JSX es que aplica
+        // un React.createElement() que pide un padre y los hijos que tendrá dentro
         <div className="Person">
             <p onClick={ props.click }>I'm { props.name }, and I'm { props.age } years old!</p>
             { props.children }
