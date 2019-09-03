@@ -9,21 +9,23 @@ class App extends Component {
   state = {
     persons: [
       {
+        id: 123,
         name: "Pablo",
         age: "24"
       },
       {
+        id: 'fgd',
         name: "Hiromi",
         age: "17"
       }
     ],
-    showPersons: false
+    showPersons: true
   }
 
   
   // La convención de React dice que todos los métodos deben acabar con un Handler
   // cuando no lo llamas activamente, pero manejan un evento (como click, por ejemplo)
-  switchNameHandler = (newName) => {
+  /* switchNameHandler = (newName) => {
     console.log("was clicked");
 
     // Si para cambiar el etado hacemos un 
@@ -53,28 +55,55 @@ class App extends Component {
         }
       ]
     });
+  } */
+
+  deletePersonHandler = (i) => {
+    // En Javascrpit, cuando asignas en una variable a un array o un objeto, sólo apuntas hacia ellos,
+    // no copias realmente el valor de éstos (reference types). 
+    // Para evitar eso, haces uso del slice() (porque es un arreglo). Así recibes una copia del arreglo y
+    // no una referencia. Lo mismo con el spread operator.
+
+    //const persons = this.state.persons.slice();
+
+    // Haciendo uso de ES6, en lugar de usar slice(), puedes hacer uso del spread [...arreglo] operator.
+    // Este operador copia todos los elementos de una arreglo y los une a otros.
+    const persons = [...this.state.persons];
+
+    // Si mantienes la igualdad al arreglo de personas del estado y lo cambias, estás mutándolo 
+    // y lo vuelves desconfiable e inestable. Con el slice() o con [...arreglo] lo puedes modificar 
+    // a tu gusto porque es una copia del arreglo y no una referencia a éste.
+    persons.splice(i, 1);
+
+    this.setState({
+      persons: persons
+    });
   }
 
-  inputNameHandler = (event) => {
+  inputNameHandler = (event, id) => {
+    const personIndex = this.state.persons.findIndex(person => {
+      return person.id === id;
+    });
+
     // El event siempre se genera cuando hay interacción con algún elemento del DOM.
     // Los event (a veces conocidos como el parámetro e) siempre tienen una propiedad llamada target.
     // Dependiendo del target, puede tener un valor de value.
 
+    // Como cada persona es un objeto y lo modificaremos, usamos el spread operator
+    const person = {
+      ...this.state.persons[personIndex]
+    };
+
+    
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
     this.setState({
-      persons: [
-        {
-          // En este caso, el event.target hace referencia al input que está llamando a la función en su
-          // onChange().
-          name: event.target.value,
-          age: "24"
-        },
-        {
-          name: event.target.value,
-          age: "19"
-        }
-      ]
+      persons: persons
     });
   }
+
 
   togglePersonsHandler = () => {
     this.setState({
@@ -103,14 +132,21 @@ class App extends Component {
     let persons = null;
 
     if(this.state.showPersons) {
+      // Cada que haces una lista [map()], necesitas pasarle al atributo que será rendereado una key
+      // para que React pueda hacer una comparación con el DOM actual contra el pasado para saber qué
+      // hacer en su virtualDOM cuando hay listas.
+      // El key TIENE que ser un valor único, por ejemplo, el ID de una BD.
       persons = (
         <div>
-          { this.state.persons.map(person => {
+          { this.state.persons.map((person, i) => {
             return <Person 
                     name={ person.name } 
                     age={ person.age } 
-                    click={ this.switchNameHandler.bind(this, ["Eduardo", "Mariana"]) }
-                    changeName={ this.inputNameHandler } 
+                    click={ () => this.deletePersonHandler(i) }
+                    // Aquí le pones en la función anónima el event porque, al ser lo que se ejecutará
+                    // cuando hay un evento (onChange), entonces es quien realmente recibe el parámetro event.
+                    changeName={ (event) => this.inputNameHandler(event, person.id) } 
+                    key={person.id}
                   />
           }) }
         </div>
