@@ -16,10 +16,19 @@
 
 .App-title {
   font-size: 1.5em;
+  font-weight: 400;
 }
 
 .App-intro {
   font-size: large;
+}
+
+.blue {
+  color: #61DAFB;
+}
+
+.bold {
+  font-weight: bold;
 }
 
 @keyframes App-logo-spin {

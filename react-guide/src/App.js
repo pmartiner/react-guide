@@ -2,6 +2,21 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Person from './Person/Person';
+import styled, { css } from 'styled-components';
+
+const ToggleButton = styled.button`
+  background-color: ${props => props.toggled ? "#cf3434" : "#3ac961"};
+  font: inherit;
+  padding: 1em;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-weight: bold;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+`;
 
 class App extends Component {
   // en ES7 no necesito escribir el constructor() y su super() para inicializar
@@ -116,20 +131,10 @@ class App extends Component {
 
     // Para darle estilos inline a tus elementos lo haces a través de JS con objetos y propiedades hechas
     // para JS.
-    const style = {
-      backgroundColor: "#3776ad",
-      font: "inherit",
-      padding: "1em",
-      marginTop: "1rem",
-      marginBottom: "1rem",
-      color: "white",
-      border: "solid 1px #4c7ca6",
-      borderRadius: "5px",
-      cursor: "pointer",
-      boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)"
-    }
+    
 
     let persons = null;
+    let toggled = this.state.showPersons;
 
     if(this.state.showPersons) {
       // Cada que haces una lista [map()], necesitas pasarle al atributo que será rendereado una key
@@ -151,17 +156,29 @@ class App extends Component {
           }) }
         </div>
       );
+
     }
+
+    let classes = [];
+    
+    if(this.state.persons.length <= 2){
+      classes.push('blue');
+    }
+    if(this.state.persons.length <= 1) {
+      classes.push('bold');
+    }
+
+    classes = classes.join(' ')
 
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className={"App-title " + classes}>Welcome to React</h1>
         </header>
         {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
             mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
-        <button style={ style } onClick={ this.togglePersonsHandler } >Toggle persons</button>
+        <ToggleButton onClick={ this.togglePersonsHandler } toggled={ toggled }>Toggle persons</ToggleButton>
         
           {/* Entre llaves se puede escribir JS, no solo elementos HTML-JSX */}
 
