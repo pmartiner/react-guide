@@ -16,6 +16,11 @@ const ToggleButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+
+  :hover {
+    background-color: ${props => props.toggled ? "firebrick" : "mediumseagreen"};;
+    box-shadow: 0;
+  }
 `;
 
 class App extends Component {
