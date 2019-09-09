@@ -19,7 +19,13 @@ const ToggleButton = styled.button`
 
   :hover {
     background-color: ${props => props.toggled ? "firebrick" : "mediumseagreen"};;
-    box-shadow: 0;
+    box-shadow: 0 0;
+  }  
+`;
+
+const StyledPerson = styled(Person)`
+  @media (min-width: 500px) {
+    width: 25vw;
   }
 `;
 
@@ -149,7 +155,7 @@ class App extends Component {
       persons = (
         <div>
           { this.state.persons.map((person, i) => {
-            return <Person 
+            return <StyledPerson 
                     name={ person.name } 
                     age={ person.age } 
                     click={ () => this.deletePersonHandler(i) }
