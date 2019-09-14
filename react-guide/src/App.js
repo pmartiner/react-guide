@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Person from './Person/Person';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 const ToggleButton = styled.button`
   background-color: ${props => props.toggled ? "#cf3434" : "#3ac961"};
@@ -155,7 +155,7 @@ class App extends Component {
       persons = (
         <div>
           { this.state.persons.map((person, i) => {
-            return <StyledPerson 
+            return <Person 
                     name={ person.name } 
                     age={ person.age } 
                     click={ () => this.deletePersonHandler(i) }
