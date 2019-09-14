@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import styles from './App.module.css';
 import Person from './Person/Person';
 import styled from 'styled-components';
 
@@ -155,7 +155,7 @@ class App extends Component {
       persons = (
         <div>
           { this.state.persons.map((person, i) => {
-            return <Person 
+            return <StyledPerson 
                     name={ person.name } 
                     age={ person.age } 
                     click={ () => this.deletePersonHandler(i) }
@@ -173,19 +173,19 @@ class App extends Component {
     let classes = [];
     
     if(this.state.persons.length <= 2){
-      classes.push('blue');
+      classes.push(styles.blue);
     }
     if(this.state.persons.length <= 1) {
-      classes.push('bold');
+      classes.push(styles.bold);
     }
 
     classes = classes.join(' ')
 
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className={"App-title " + classes}>Welcome to React</h1>
+      <div className={ styles.App }>
+        <header className={ styles['App-header'] }>
+          <img src={logo} className={ styles['App-logo'] } alt="logo" />
+          <h1 className={styles['App-title'] + ' ' + classes}>Welcome to React</h1>
         </header>
         {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
             mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
