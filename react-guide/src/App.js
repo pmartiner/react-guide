@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+// CSS modules nos permite enfocar las classes de un archivo CSS únicamente
+// a un componente al importarlo como objeto de Javascript, otorgándole
+// un nombre único a esta clase.
+// NOTA: para que React-scripts lo pueda entender sin modificar el Webpack,
+//       el archivo CSS importado tiene que llamarse xxxx.modules.css A FUERZA
 import styles from './App.module.css';
-import Person from './Person/Person';
+import Person from './components/Persons/Person/Person';
 import styled from 'styled-components';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
+// Styled-components nos permite hacer CSS en línea dedicado únicamente a un componente.
+// Styled-components crea un componente con un estilo establecido por el usuario, y 
+// puede replicar este estilo si es usado como una constante. 
+// También recibe props y también le puede heredar los estilos a otro componente 
+// (como en StyledPerson)
 const ToggleButton = styled.button`
   background-color: ${props => props.toggled ? "#cf3434" : "#3ac961"};
   font: inherit;
@@ -24,8 +35,8 @@ const ToggleButton = styled.button`
 `;
 
 const StyledPerson = styled(Person)`
-  @media (min-width: 500px) {
-    width: 25vw;
+  @media (max-width: 500px) {
+    width: 75vw;
   }
 `;
 
@@ -155,15 +166,22 @@ class App extends Component {
       persons = (
         <div>
           { this.state.persons.map((person, i) => {
-            return <StyledPerson 
-                    name={ person.name } 
-                    age={ person.age } 
-                    click={ () => this.deletePersonHandler(i) }
-                    // Aquí le pones en la función anónima el event porque, al ser lo que se ejecutará
-                    // cuando hay un evento (onChange), entonces es quien realmente recibe el parámetro event.
-                    changeName={ (event) => this.inputNameHandler(event, person.id) } 
-                    key={person.id}
-                  />
+            // Los Error Boundaries son Higher Order Components (que envuelven a otros componentes)
+            // Éstos SÓLO se deben usar cuando hay errores que se pueden generar y no dependen del
+            // desarrollador. Lo que hacen los Boundaries es mostrar un error personalizado en 
+            // producción.
+
+            // Las keys siempre deben de ir en el componente de "hasta fuera"
+            return <ErrorBoundary key={person.id}>
+                      <StyledPerson 
+                            name={ person.name } 
+                            age={ person.age } 
+                            click={ () => this.deletePersonHandler(i) }
+                            // Aquí le pones en la función anónima el event porque, al ser lo que se ejecutará
+                            // cuando hay un evento (onChange), entonces es quien realmente recibe el parámetro event.
+                            changeName={ (event) => this.inputNameHandler(event, person.id) }                       
+                          /> 
+                   </ErrorBoundary>
           }) }
         </div>
       );

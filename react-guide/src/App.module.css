@@ -35,3 +35,17 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.App-title:hover {
+  color: dodgerblue;
+}
+
+.App button {
+  cursor: pointer;
+}
+
+@media (max-width: 500px){
+  .App button {
+    width: 50vw;
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Person from './Person/Person';
+import Person from '.components/Person/Person';
 
 
 // Vamos a reescribir la clase App como un componente funcional con estado
