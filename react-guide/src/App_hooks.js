@@ -7,6 +7,9 @@ import Person from '.components/Person/Person';
 // Vamos a reescribir la clase App como un componente funcional con estado
 // haciendo uso de React Hooks
 
+// No porque no sea un Class-based component significa que sea un Stateless component.
+// El hecho de que esté usando useState, aunque sea un Functional component, hace al
+// componente un Stateful component.
 const app = props => {
 
   // La función useState() siempre regresa 2 elementos en un arreglo:
@@ -16,7 +19,7 @@ const app = props => {
   //      objeto, sustituye al estado por el que le pasas a la función.
   //      Es decir, si tuviera {persons: ..., otro: ...} y usara la función (aquí)
   //      setPersonState({ persons: ... }), el nuevo estado del componente funcional estaría
-  //      ÚNICAMENTE constituido por {persons: ...}
+  //      ÚNICAMENTE constituido por {persons: ...} => perdería {otro:...}
   const [personState, setPersonState] = useState({
     persons: [
         {

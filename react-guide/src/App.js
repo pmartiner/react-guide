@@ -1,48 +1,45 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-// CSS modules nos permite enfocar las classes de un archivo CSS únicamente
-// a un componente al importarlo como objeto de Javascript, otorgándole
-// un nombre único a esta clase.
-// NOTA: para que React-scripts lo pueda entender sin modificar el Webpack,
-//       el archivo CSS importado tiene que llamarse xxxx.modules.css A FUERZA
-import styles from './App.module.css';
-import Person from './components/Persons/Person/Person';
-import styled from 'styled-components';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import Persons from './components/Persons/Persons';
+import Cockpit from './components/Cockpit/Cockpit';
+import styles from './assets/stylesheets/App.module.css';
 
-// Styled-components nos permite hacer CSS en línea dedicado únicamente a un componente.
-// Styled-components crea un componente con un estilo establecido por el usuario, y 
-// puede replicar este estilo si es usado como una constante. 
-// También recibe props y también le puede heredar los estilos a otro componente 
-// (como en StyledPerson)
-const ToggleButton = styled.button`
-  background-color: ${props => props.toggled ? "#cf3434" : "#3ac961"};
-  font: inherit;
-  padding: 1em;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  color: white;
-  font-weight: bold;
-  border: 0;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+// App se vuelve el container de Cockpit y de Persons; esto significa que App
+// únicamente se encargará de los handlers y de modificar el estado, mientras
+// que sólo rendeará los componentes con los props dados, sin enfocarse en el estilo
+// del UI.
 
-  :hover {
-    background-color: ${props => props.toggled ? "firebrick" : "mediumseagreen"};;
-    box-shadow: 0 0;
-  }  
-`;
+// Separamos los componentes en containers y en presentational components para que el
+// flujo sea más predecible y sepamos dónde se está cambiando el estado, si cambia.
+// Utilizamos los presentational components (stateless) para renderear la UI, no para 
+// manejar la lógica de la aplicación.
 
-const StyledPerson = styled(Person)`
-  @media (max-width: 500px) {
-    width: 75vw;
-  }
-`;
+// Los class-based components tienen Lifecycle hooks quue son funciones que 
+// se ejecutan cada vez que el componente se crea o que se rerenderea.
 
 class App extends Component {
-  // en ES7 no necesito escribir el constructor() y su super() para inicializar
-  // los atributos de la clase
+  constructor(props) {
+    super(props);
+    console.log("[App.js] constructor");
+    // this.state = {
+    //   persons: [
+    //     {
+    //       id: 123,
+    //       name: "Pablo",
+    //       age: "24"
+    //     },
+    //     {
+    //       id: 'fgd',
+    //       name: "Hiromi",
+    //       age: "17"
+    //     }
+    //   ],
+    //   showPersons: true
+    // }
+  }
+
+
+  // en ES7 no necesito escribir el constructor(props) y su super(props) para inicializar
+  // los atributos de la clase junto con sus props.
   state = {
     persons: [
       {
@@ -59,6 +56,14 @@ class App extends Component {
     showPersons: true
   }
 
+  static getDerivedStateFromProps(props, state) {
+    console.log("[App.js] getDerivedStateFromProps", props);
+    return state;
+  }
+
+  componentDidMount() {
+    console.log("[App.js] componentDidMount");
+  }
   
   // La convención de React dice que todos los métodos deben acabar con un Handler
   // cuando no lo llamas activamente, pero manejan un evento (como click, por ejemplo)
@@ -156,59 +161,27 @@ class App extends Component {
     
 
     let persons = null;
-    let toggled = this.state.showPersons;
+    
 
     if(this.state.showPersons) {
       // Cada que haces una lista [map()], necesitas pasarle al atributo que será rendereado una key
       // para que React pueda hacer una comparación con el DOM actual contra el pasado para saber qué
       // hacer en su virtualDOM cuando hay listas.
       // El key TIENE que ser un valor único, por ejemplo, el ID de una BD.
-      persons = (
-        <div>
-          { this.state.persons.map((person, i) => {
-            // Los Error Boundaries son Higher Order Components (que envuelven a otros componentes)
-            // Éstos SÓLO se deben usar cuando hay errores que se pueden generar y no dependen del
-            // desarrollador. Lo que hacen los Boundaries es mostrar un error personalizado en 
-            // producción.
-
-            // Las keys siempre deben de ir en el componente de "hasta fuera"
-            return <ErrorBoundary key={person.id}>
-                      <StyledPerson 
-                            name={ person.name } 
-                            age={ person.age } 
-                            click={ () => this.deletePersonHandler(i) }
-                            // Aquí le pones en la función anónima el event porque, al ser lo que se ejecutará
-                            // cuando hay un evento (onChange), entonces es quien realmente recibe el parámetro event.
-                            changeName={ (event) => this.inputNameHandler(event, person.id) }                       
-                          /> 
-                   </ErrorBoundary>
-          }) }
-        </div>
-      );
-
+      persons = <Persons 
+                  persons={ this.state.persons } 
+                  clicked={ this.deletePersonHandler } 
+                  changed = { this.inputNameHandler }
+                />;
     }
 
-    let classes = [];
     
-    if(this.state.persons.length <= 2){
-      classes.push(styles.blue);
-    }
-    if(this.state.persons.length <= 1) {
-      classes.push(styles.bold);
-    }
-
-    classes = classes.join(' ')
+    console.log("[App.js] rendering...");
 
     return (
       <div className={ styles.App }>
-        <header className={ styles['App-header'] }>
-          <img src={logo} className={ styles['App-logo'] } alt="logo" />
-          <h1 className={styles['App-title'] + ' ' + classes}>Welcome to React</h1>
-        </header>
-        {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
-            mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
-        <ToggleButton onClick={ this.togglePersonsHandler } toggled={ toggled }>Toggle persons</ToggleButton>
-        
+
+        <Cockpit persons={ this.state.persons } clicked={ this.togglePersonsHandler } showPersons = { this.state.showPersons }/>
           {/* Entre llaves se puede escribir JS, no solo elementos HTML-JSX */}
 
           {/* JSX sólo acepta condicionales en forma ternaria entre llaves dentro del return del render():
