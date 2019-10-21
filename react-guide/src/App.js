@@ -71,6 +71,7 @@ class App extends Component {
     console.log("[App.js] componentDidMount");
   }
   
+
   // La convención de React dice que todos los métodos deben acabar con un Handler
   // cuando no lo llamas activamente, pero manejan un evento (como click, por ejemplo)
   /* switchNameHandler = (newName) => {

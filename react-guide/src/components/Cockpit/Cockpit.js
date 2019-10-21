@@ -1,4 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+// useEffect() es uno de los hooks más importantes dentro de los componnentes funcionales.
+// useEffect() te da la oportunidad de acceder a los cíclos de vida del componente
+// cuando éste es uno funcional, pero en UN SOLO React Hook.
+
+
 import logo from '../../assets/svg/logo.svg';
 // CSS modules nos permite enfocar las classes de un archivo CSS únicamente
 // a un componente al importarlo como objeto de Javascript, otorgándole
@@ -33,32 +38,58 @@ const ToggleButton = styled.button`
 `;
 
 const Cockpit = props => {
+  // useEffect() recibe como parámetro una función sin parámetros que se 
+  // ejecutara cada vez ciclo de actualización del componente, y también recibe como
+  // segundo parámetro un arreglo que se compone de todas las variables que observa, y que,
+  // dada una actualización, useEffect() se ejecute con la función que definiste;
+  // pero si el arreglo está vacío, la función definida dentro de useEffect() se 
+  // ejecutará UNA ÚNICA vez al momento de crear el componente.
+  // Si tienes más información que observar, puedes usar useEffect() varias veces.
+  
+  // useEffect() es componentDidMount() y componentDidUpdate() en una sola función.
+  useEffect(() => {
+    console.log('[Cockpit.js] useEffect');
+    // Aquí puedes insertar HTTP requests como este fake (setTimeout)
+    setTimeout(() => {
+      alert("Guardada la info. en la nube");
+    }, 1000);
 
-    let toggled = props.showPersons;
-    let classes = [];
-    
-    if(props.persons.length <= 2){
-      classes.push(styles.blue);
-    }
-    if(props.persons.length <= 1) {
-      classes.push(styles.bold);
-    }
+    // Cuando hay un return en useEffect(), esta función se ejecuta ANTES de la 
+    // función definida en useEffect(), pero DESPUÉS del primer ciclo de rendereo
+    // si el arreglo está vacío. En este caso se ejecuta el cleanup DESPUÉS de cada 
+    // cambio en props.persons, pero ANTES de la función principal de useEffect(). 
+    // Si no tienes un arreglo como segundo parámetro, entonces el Cleanup se ejecuta 
+    // cada que se actualiza el componente, pero ANTES de la función principal.
+    return () => {
+      console.log("[Cockpit.js] Cleanup work.")
+    };
+  }, [props.persons]);
+  
+  let toggled = props.showPersons;
+  let classes = [];
+  
+  if(props.persons.length <= 2){
+    classes.push(styles.blue);
+  }
+  if(props.persons.length <= 1) {
+    classes.push(styles.bold);
+  }
 
-    classes = classes.join(' ')
-    
-    return(
-        <div>
-            <header className={ styles['Cockpit-header'] }>
-                <img src={logo} className={ styles['Cockpit-logo'] } alt="logo" />
-                <h1 className={styles['Cockpit-title'] + ' ' + classes}>Welcome to React</h1>
-            </header>
-            {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
-                mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
-            <ToggleButton onClick={ props.clicked } toggled={ toggled }>Toggle persons</ToggleButton>
-        </div>
-        
-        
-    );
+  classes = classes.join(' ')
+  
+  return(
+      <div>
+          <header className={ styles['Cockpit-header'] }>
+              <img src={logo} className={ styles['Cockpit-logo'] } alt="logo" />
+              <h1 className={styles['Cockpit-title'] + ' ' + classes}>Welcome to React</h1>
+          </header>
+          {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
+              mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
+          <ToggleButton onClick={ props.clicked } toggled={ toggled }>Toggle persons</ToggleButton>
+      </div>
+      
+      
+  );
 }
 
 export default Cockpit;

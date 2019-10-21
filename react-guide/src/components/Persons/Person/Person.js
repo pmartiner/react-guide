@@ -5,6 +5,11 @@ import styles from './Person.module.css';
 
 // Un componente sin estado puede ser una función simple, sin necesitar ser una clase
 class Person extends Component {
+    // componentWillUnmount() se ejecuta justo antes de eliminarse un componente del DOM.
+    componentWillUnmount() {
+        console.log("[Person.js] componentWillUnmount");
+    }
+
     render() {
         return (
             // Tiene que tener un wrapper porque, en el fondo, lo que hace JSX es que aplica
