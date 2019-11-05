@@ -68,10 +68,10 @@ const Cockpit = props => {
   let toggled = props.showPersons;
   let classes = [];
   
-  if(props.persons.length <= 2){
+  if(props.personsLength <= 2){
     classes.push(styles.blue);
   }
-  if(props.persons.length <= 1) {
+  if(props.personsLength <= 1) {
     classes.push(styles.bold);
   }
 
@@ -92,4 +92,6 @@ const Cockpit = props => {
   );
 }
 
-export default Cockpit;
+// React.memo() toma un snapshot del component y si algo cambia en Cockpit, lo entrega.
+// Su funcionalidad es similar a ShouldComponentUpdate
+export default React.memo(Cockpit);

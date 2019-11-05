@@ -1,4 +1,14 @@
-import React, { Component } from 'react';
+// Por defecto, Component no integra una validación shouldComponentUpdate(),
+// sino que tú la tienes que agregar.
+// import React, { Component } from 'react';
+
+// Sin embargo, un PureComponent ya tiene integrado un shouldComponentUpdate(), 
+// PERO no es personalizable: checa cada prop dentro del render y lo compara con el actual
+// para que, si algún prop dentro de la función render cambia, entonces el PureComponent 
+// se rerenderee. Si no hay cambios en ningún prop que está dentro de render, 
+// el PureComponent no se rerenderea
+import React, { PureComponent } from 'react';
+
 import Person from './Person/Person';
 import styled from 'styled-components';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
@@ -14,7 +24,7 @@ const StyledPerson = styled(Person)`
   }
 `;
 
-class Persons extends Component {
+class Persons extends PureComponent {
   // static getDerivedStateFromProps(props, state) {
   //   console.log("[Persons.js] getDerivedStateFromProps")
 
@@ -25,11 +35,16 @@ class Persons extends Component {
   //   console.log("[Persons.js] componenteWillReceiveProps", props);
   // }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log("[Persons.js] shouldComponentUpdate");
-
-    return true;
-  }
+  // shouldComponentUpdate() ahora previene que se re-renderee si su componente "wrapper"
+  // cambia, a menos de que se cumplan estas condiciones
+  
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log("[Persons.js] shouldComponentUpdate");
+  //   if(nextProps.persons !== this.props.persons)
+  //     return true;
+  //   else
+  //     return false;
+  // }
 
   getSnapshotBeforeUpdate(prevProps, prevState) {
     console.log("[Persons.js] getSnapshotBeforeUpdate");

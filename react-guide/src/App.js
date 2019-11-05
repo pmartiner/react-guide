@@ -107,7 +107,7 @@ class App extends Component {
   } */
 
   deletePersonHandler = (i) => {
-    // En Javascrpit, cuando asignas en una variable a un array o un objeto, sólo apuntas hacia ellos,
+    // En JavaScript, cuando asignas en una variable a un array o un objeto, sólo apuntas hacia ellos,
     // no copias realmente el valor de éstos (reference types). 
     // Para evitar eso, haces uso del slice() (porque es un arreglo). Así recibes una copia del arreglo y
     // no una referencia. Lo mismo con el spread operator.
@@ -188,7 +188,7 @@ class App extends Component {
     return (
       <div className={ styles.App }>
 
-        <Cockpit persons={ this.state.persons } clicked={ this.togglePersonsHandler } showPersons = { this.state.showPersons }/>
+        <Cockpit personsLength={ this.state.persons.length } clicked={ this.togglePersonsHandler } showPersons = { this.state.showPersons }/>
           {/* Entre llaves se puede escribir JS, no solo elementos HTML-JSX */}
 
           {/* JSX sólo acepta condicionales en forma ternaria entre llaves dentro del return del render():
