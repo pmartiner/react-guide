@@ -4,8 +4,13 @@ import React from 'react';
 // a los demśa y, además, les agrega algo: estilos, estructuras HTML adicionales, lógica, etc.
 
 
-// props.children = todo los elementos que están entre el tag de apertura 
-// y de cierre de Aux
-const aux = props => props.children;
+// FORMA 1 de crear HOC 
+// Un componente funcional
 
-export default aux;
+const withClass = props => (
+    <div className={ props.className }>
+        { props.children }
+    </div>
+);
+
+export default withClass;

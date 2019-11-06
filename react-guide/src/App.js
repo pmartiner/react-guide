@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Persons from './components/Persons/Persons';
 import Cockpit from './components/Cockpit/Cockpit';
+import withClass from './components/HOC/withClass';
 import styles from './assets/stylesheets/App.module.css';
 
 // App se vuelve el container de Cockpit y de Persons; esto significa que App
@@ -186,7 +187,7 @@ class App extends Component {
     console.log("[App.js] rendering...");
 
     return (
-      <div className={ styles.App }>
+      <div >
 
         <Cockpit personsLength={ this.state.persons.length } clicked={ this.togglePersonsHandler } showPersons = { this.state.showPersons }/>
           {/* Entre llaves se puede escribir JS, no solo elementos HTML-JSX */}
@@ -237,4 +238,7 @@ class App extends Component {
   }
 }
 
-export default App;
+// Un HOC puede ser en forma de función, donde ésta envuelve al default export
+// Se suele usar este estilo para dejar claro que no se involucra tanto en el rendereo
+// el HOC (JSX), sino más en la lógica;
+export default withClass(App, styles.App);
