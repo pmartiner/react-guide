@@ -3,6 +3,7 @@ import Persons from './components/Persons/Persons';
 import Cockpit from './components/Cockpit/Cockpit';
 import withClass from './components/HOC/withClass';
 import styles from './assets/stylesheets/App.module.css';
+import AuthContext from './context/auth-context';
 
 // App se vuelve el container de Cockpit y de Persons; esto significa que App
 // únicamente se encargará de los handlers y de modificar el estado, mientras
@@ -53,8 +54,9 @@ class App extends Component {
         age: 17
       }
     ],
-    showPersons: true,
-    changedCounter: 0
+    showPersons: false,
+    changedCounter: 0,
+    loggedIn: false
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -170,12 +172,22 @@ class App extends Component {
     })
   }
 
+  login = () => {
+    this.setState({
+      loggedIn: true
+    })
+  }
+
+  logout = () => {
+    this.setState({
+      loggedIn: false
+    })
+  }
+
   // El DOM re-renderea el componente cada que cambia el estado
   render() {
-
     // Para darle estilos inline a tus elementos lo haces a través de JS con objetos y propiedades hechas
     // para JS.
-    
 
     let persons = null;
     
@@ -188,7 +200,8 @@ class App extends Component {
       persons = <Persons 
                   persons={ this.state.persons } 
                   clicked={ this.deletePersonHandler } 
-                  changed = { this.inputNameHandler }
+                  changed={ this.inputNameHandler }
+                  loggedIn={ this.state.loggedIn }
                 />;
     }
 
@@ -197,8 +210,28 @@ class App extends Component {
 
     return (
       <div >
-
-        <Cockpit personsLength={ this.state.persons.length } clicked={ this.togglePersonsHandler } showPersons = { this.state.showPersons }/>
+        {/* Para hacer uso del Context API necesitamos wrappear al objeto
+            que usará el estado del objecto del Context, y SÓLO los que lo usarán.
+            En nuestro caso, envolvemos al Cockpit con un ContextObj.Provider, donde
+            ContextObj = AuthContext en este tutorial. 
+            
+            Todo Provider necesita un prop llamado value, que serán los valores que 
+            establecerá el Context API en el objeto que declaramos en auth-context.js. */}
+        <AuthContext.Provider value={{
+            loggedIn: this.state.loggedIn, 
+            login: this.login, 
+            logout: this.logout
+          }}
+        >
+          <Cockpit 
+            personsLength={ this.state.persons.length } 
+            clicked={ this.togglePersonsHandler } 
+            showPersons={ this.state.showPersons }
+            login={ this.login }
+            logout={ this.logout }
+            loggedIn={ this.state.loggedIn }
+          />
+        
           {/* Entre llaves se puede escribir JS, no solo elementos HTML-JSX */}
 
           {/* JSX sólo acepta condicionales en forma ternaria entre llaves dentro del return del render():
@@ -210,38 +243,39 @@ class App extends Component {
               Se llama React.createElement() si la condición es verdadera usando al 
               div como padre */}
           
-        <div>
-          {/* Puedes pasar métodos a otros elementos a través de props. Por ejemplo: click={ this.switchNameHandler }
-      
-              Cuando haces un this.switchName.bind(this), lo que dices es que al primer this (elemento que
-              contiene la función switchNameHandler), le vas a bindear otro this, que recibirá como parámetro.
-              Éste segundo this proviene de la función y se referirá a la clase, no al objeto.
-              
-              Cuando le pasas un segundo argumento (o más), le mandas el parámetro (o más, si hay) 
-              de la función al objeto sin estado. Por ejemplo: 
-              click = { this.switchNameHandler(this, newName[]) } 
-              
-              Ésta es la forma recomendada (la función anónima es ineficiente)*/}
+          <div>
+            {/* Puedes pasar métodos a otros elementos a través de props. Por ejemplo: click={ this.switchNameHandler }
+        
+                Cuando haces un this.switchName.bind(this), lo que dices es que al primer this (elemento que
+                contiene la función switchNameHandler), le vas a bindear otro this, que recibirá como parámetro.
+                Éste segundo this proviene de la función y se referirá a la clase, no al objeto.
+                
+                Cuando le pasas un segundo argumento (o más), le mandas el parámetro (o más, si hay) 
+                de la función al objeto sin estado. Por ejemplo: 
+                click = { this.switchNameHandler(this, newName[]) } 
+                
+                Ésta es la forma recomendada (la función anónima es ineficiente)*/}
 
-          {/* Otra forma de mandar parámetros a través de métodos en props es con las arrow functions.
-              En las props, cuando usas una arrow function, siempre recives un event (e) aunque no tenga
-              parámetros la función, pues siempre puedes interactuar con los elementos del DOM. Si quieres
-              usarlo, tienes que hacer una declaración explícita del parámetro (ver inputNameHandler(event)).
-              
-              Cuando usas una arrow function (como aquí abajo), implícitamente lo siguiente a la flecha
-              es un return si están en la misma línea. Por ejemplo:
-              () => this.switchNameHandler(newName[]) es lo mismo que () => return this.switchNameHandler(newName[]) 
-              
-              Si quisieras que no estuviera en una misma línea, la alternativa es escribir el cuerpo de la 
-              función entre llaves {}, después de la flecha. Por ejemplo: 
-              () => { this.switchNameHandler(newName[]) } 
-              
-              Si le pasas una función anónima al prop, la ejecuta hasta que sucede el evento, a diferencia
-              de sólo mandarle la función pero con paréntesis.
-              () => this.switchNameHandler() != this.switchNameHandler() */}
+            {/* Otra forma de mandar parámetros a través de métodos en props es con las arrow functions.
+                En las props, cuando usas una arrow function, siempre recives un event (e) aunque no tenga
+                parámetros la función, pues siempre puedes interactuar con los elementos del DOM. Si quieres
+                usarlo, tienes que hacer una declaración explícita del parámetro (ver inputNameHandler(event)).
+                
+                Cuando usas una arrow function (como aquí abajo), implícitamente lo siguiente a la flecha
+                es un return si están en la misma línea. Por ejemplo:
+                () => this.switchNameHandler(newName[]) es lo mismo que () => return this.switchNameHandler(newName[]) 
+                
+                Si quisieras que no estuviera en una misma línea, la alternativa es escribir el cuerpo de la 
+                función entre llaves {}, después de la flecha. Por ejemplo: 
+                () => { this.switchNameHandler(newName[]) } 
+                
+                Si le pasas una función anónima al prop, la ejecuta hasta que sucede el evento, a diferencia
+                de sólo mandarle la función pero con paréntesis.
+                () => this.switchNameHandler() != this.switchNameHandler() */}
 
-          { persons }
-        </div>      
+            { persons }
+          </div>
+        </AuthContext.Provider>      
       </div>
     );
   }

@@ -73,7 +73,8 @@ class Persons extends PureComponent {
                         click={ () => this.props.clicked(i) }
                         // Aquí le pones en la función anónima el event porque, al ser lo que se ejecutará
                         // cuando hay un evento (onChange), entonces es quien realmente recibe el parámetro event.
-                        changeName={ (event) => this.props.changed(event, person.id) }                       
+                        changeName={ (event) => this.props.changed(event, person.id) }    
+                        loggedIn={ this.props.loggedIn }                 
                       /> 
                </ErrorBoundary>
       })

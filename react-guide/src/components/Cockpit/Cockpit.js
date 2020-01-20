@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 // useEffect() es uno de los hooks más importantes dentro de los componnentes funcionales.
 // useEffect() te da la oportunidad de acceder a los cíclos de vida del componente
 // cuando éste es uno funcional, pero en UN SOLO React Hook.
 
+import AuthContext from '../../context/auth-context';
 
 import logo from '../../assets/svg/logo.svg';
 // CSS modules nos permite enfocar las classes de un archivo CSS únicamente
@@ -18,22 +19,41 @@ import styled from 'styled-components';
 // puede replicar este estilo si es usado como una constante. 
 // También recibe props y también le puede heredar los estilos a otro componente 
 // (como en StyledPerson)
-const ToggleButton = styled.button`
-  background-color: ${props => props.toggled ? "#cf3434" : "#3ac961"};
+
+const Button = styled.button`
   font: inherit;
   padding: 1em;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  color: white;
   font-weight: bold;
   border: 0;
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 
   :hover {
-    background-color: ${props => props.toggled ? "firebrick" : "mediumseagreen"};;
     box-shadow: 0 0;
+  } 
+`;
+
+const ToggleButton = styled(Button)`
+  background-color: ${props => props.toggled ? "#cf3434" : "#3ac961"};
+  color: white;
+
+  :hover {
+    background-color: ${props => props.toggled ? "firebrick" : "mediumseagreen"};
+  }  
+`;
+
+const LoginButton = styled(Button)`
+  background-color: ${props => props.loggedIn ? "#c42b88" : "#044ad0"};
+  color: white;
+
+  :hover {
+    background-color: ${props => props.loggedIn ? "darkmagenta" : "darkslateblue"};
   }  
 `;
 
@@ -42,6 +62,10 @@ const Cockpit = props => {
   // useRef() es la forma de crear refs en React Hooks. Necesitamos pasarle un objeto como
   // parámetro para almacenar la info de éste, pero en este caso le pasamos uno nulo 
   const cockpitBtnRef = useRef(null);
+  
+  // Para llamar al context usando React Hooks también podemos hacer lo siguiente 
+  // con useContext():
+  const authContext = useContext(AuthContext);
 
   // useEffect() recibe como parámetro una función sin parámetros que se 
   // ejecutara cada vez ciclo de actualización del componente, y también recibe como
@@ -85,25 +109,51 @@ const Cockpit = props => {
   }
 
   classes = classes.join(' ')
-  
+
+  let loggedInTxt = '';
+
+  if(props.loggedIn)
+    loggedInTxt = 'Log out'; 
+  else
+    loggedInTxt = 'Log in'
   return(
-      <div>
-          <header className={ styles['Cockpit-header'] }>
-              <img src={logo} className={ styles['Cockpit-logo'] } alt="logo" />
-              <h1 className={styles['Cockpit-title'] + ' ' + classes}>Welcome to React</h1>
-          </header>
-          {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
-              mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
-          <ToggleButton 
-            onClick={ props.clicked } 
-            ref={ cockpitBtnRef } 
-            toggled={ toggled }
+    // Para consumir el estado del AuthContext es necesario envolver al objeto en 
+    // una función que lo consumirá con un ContextObj.Consumer, 
+    // donde ContextObj = AuthContext en este ejemplo.
+    <div>
+      <header className={ styles['Cockpit-header'] }>
+        <img src={logo} className={ styles['Cockpit-logo'] } alt="logo" />
+        <h1 className={styles['Cockpit-title'] + ' ' + classes}>Welcome to React</h1>
+      </header>
+      {/* Ésta es la forma de llamar el Context sin Hooks: */}
+      {/* <AuthContext.Consumer>
+        {context => (
+          <LoginButton 
+            loggedIn={ context.loggedIn } 
+            onClick={ context.loggedIn ? context.logout : context.login}
           >
-              Toggle persons
-          </ToggleButton>
-      </div>
-      
-      
+            { loggedInTxt }
+          </LoginButton>
+          )
+        }
+      </AuthContext.Consumer> */}
+      {/* Con Hooks podemos llamar al Context de la sig. forma:  */}
+      <LoginButton 
+        loggedIn={ authContext.loggedIn } 
+        onClick={ authContext.loggedIn ? authContext.logout : authContext.login}
+      >
+        { loggedInTxt }
+      </LoginButton>
+      {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
+          mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
+      <ToggleButton 
+        onClick={ props.clicked } 
+        ref={ cockpitBtnRef } 
+        toggled={ toggled }
+      >
+          Toggle persons
+      </ToggleButton>
+    </div>
   );
 }
 

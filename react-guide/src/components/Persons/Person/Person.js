@@ -5,6 +5,8 @@ import WithClass from '../../HOC/WithClassHOC';
 // y lo inyecte de forma dinámica al HTML un unos <style></style>
 import styles from './Person.module.css';
 import PropTypes from 'prop-types';
+import AuthContext from '../../../context/auth-context';
+
 
 // Un componente sin estado puede ser una función simple, sin necesitar ser una clase
 class Person extends Component {
@@ -17,6 +19,12 @@ class Person extends Component {
         this.inputRef = React.createRef();
     } 
 
+    // el contextType nos ayuda a conectar el objeto del Context API
+    // con este objeto estático de tal forma que podemos accederlo en cualquier
+    // parte del código sin necesidad de tener que inyectar un JSX del Context.
+    // ESTO SÓLO FUNCIONA PARA LOS CLASS-BASED COMPONENTS
+    static contextType = AuthContext;
+
     // Los prop-types sirven para marcar un error cuando el componente no recibe un prop
     // del tipo que aquí se establece
     static propTypes = {
@@ -27,10 +35,9 @@ class Person extends Component {
         changeName: PropTypes.func
     }
 
-    
-
     componentDidMount() {
-        console.log(this.inputRef);
+        // Para llamar al contextType lo hacemos con un this.context
+        console.log(this.context);
         this.inputRef.current.focus();
     }
 
@@ -48,6 +55,7 @@ class Person extends Component {
             // sus props.children
             //<React.Fragment>
                 <WithClass className={`${styles.Person} ${this.props.className}`}>
+                    { this.context.loggedIn ? <p>¡Hola!</p> : <p>Please log in.</p> }
                     <p onClick={ this.props.click }>I'm { this.props.name }, and I'm { this.props.age } years old!</p>
                     { this.props.children }
                     <input
