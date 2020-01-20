@@ -38,7 +38,6 @@ class App extends Component {
     // }
   }
 
-
   // en ES7 no necesito escribir el constructor(props) y su super(props) para inicializar
   // los atributos de la clase junto con sus props.
   state = {
@@ -46,15 +45,16 @@ class App extends Component {
       {
         id: 123,
         name: "Pablo",
-        age: "24"
+        age: 24
       },
       {
         id: 'fgd',
         name: "Hiromi",
-        age: "17"
+        age: 17
       }
     ],
-    showPersons: true
+    showPersons: true,
+    changedCounter: 0
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -149,9 +149,18 @@ class App extends Component {
     const persons = [...this.state.persons];
     persons[personIndex] = person;
 
-    this.setState({
-      persons: persons
-    });
+
+    // setState() es una función asíncrona, es decir, no establece el estado inmediatamente después
+    // de ejecutar la función, sino hasta que tenga los recursos para hacerlo. Entonces, cuando llamamos 
+    // a this.state.changedCounter en el setState(), no hay garantía de que sea el valor más reciente,
+    // pues es posible que setState() no haya acabado su ejecución.
+
+    // Le puedes mandar a setState un JSON o una función. Es recomendable mandarle una función cuando
+    // setState() depende de un estado anterior.
+    this.setState((prevState, props) => ({
+      persons: persons,
+      changedCounter: prevState.changedCounter + 1
+    }));
   }
 
 

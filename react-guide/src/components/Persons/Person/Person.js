@@ -4,9 +4,36 @@ import WithClass from '../../HOC/WithClassHOC';
 // Si quieres darle estilo a un componente, tienes que importar su CSS para que Webpack lo procese
 // y lo inyecte de forma dinámica al HTML un unos <style></style>
 import styles from './Person.module.css';
+import PropTypes from 'prop-types';
 
 // Un componente sin estado puede ser una función simple, sin necesitar ser una clase
 class Person extends Component {
+    // Método 1 de crear refs:
+    // inputRef = null;
+
+    // Método 2 de crear refs:
+    constructor(props) {
+        super(props);
+        this.inputRef = React.createRef();
+    } 
+
+    // Los prop-types sirven para marcar un error cuando el componente no recibe un prop
+    // del tipo que aquí se establece
+    static propTypes = {
+        click: PropTypes.func,
+        name: PropTypes.string,
+        age: PropTypes.number,
+        className: PropTypes.string,
+        changeName: PropTypes.func
+    }
+
+    
+
+    componentDidMount() {
+        console.log(this.inputRef);
+        this.inputRef.current.focus();
+    }
+
     // componentWillUnmount() se ejecuta justo antes de eliminarse un componente del DOM.
     componentWillUnmount() {
         console.log("[Person.js] componentWillUnmount");
@@ -23,7 +50,15 @@ class Person extends Component {
                 <WithClass className={`${styles.Person} ${this.props.className}`}>
                     <p onClick={ this.props.click }>I'm { this.props.name }, and I'm { this.props.age } years old!</p>
                     { this.props.children }
-                    <input type="text" onChange={ this.props.changeName } value={ this.props.name }/>
+                    <input
+                        // Las refs sirven para hacer referencia al objeto con el cual se está interactuando.
+                        // Hay 2 formas de declarar refs: como una función y una constante de la clase o en un constructor
+                        // 1) Función
+                        // ref = {(inputElem) => {this.inputRef = inputElem}}
+                        ref={ this.inputRef }
+                        type="text" 
+                        onChange={ this.props.changeName } 
+                        value={ this.props.name }/>
                 </WithClass>
             //</React.Fragment>
         );

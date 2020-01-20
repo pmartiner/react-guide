@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 // useEffect() es uno de los hooks más importantes dentro de los componnentes funcionales.
 // useEffect() te da la oportunidad de acceder a los cíclos de vida del componente
 // cuando éste es uno funcional, pero en UN SOLO React Hook.
@@ -38,6 +38,11 @@ const ToggleButton = styled.button`
 `;
 
 const Cockpit = props => {
+
+  // useRef() es la forma de crear refs en React Hooks. Necesitamos pasarle un objeto como
+  // parámetro para almacenar la info de éste, pero en este caso le pasamos uno nulo 
+  const cockpitBtnRef = useRef(null);
+
   // useEffect() recibe como parámetro una función sin parámetros que se 
   // ejecutara cada vez ciclo de actualización del componente, y también recibe como
   // segundo parámetro un arreglo que se compone de todas las variables que observa, y que,
@@ -53,6 +58,10 @@ const Cockpit = props => {
     setTimeout(() => {
       alert("Guardada la info. en la nube");
     }, 1000);
+
+    // Tenemos que llamar al click del ref dentro de useEffect para que esta función
+    // se ejecute cuando el componente está montado.
+    cockpitBtnRef.current.click();
 
     // Cuando hay un return en useEffect(), esta función se ejecuta ANTES de la 
     // función definida en useEffect(), pero DESPUÉS del primer ciclo de rendereo
@@ -85,7 +94,13 @@ const Cockpit = props => {
           </header>
           {/* Si le pones paréntesis al evento de onClick llamas a la función cuando se renderea,
               mientras que si no le pones paréntesis sólo hace una referencia al evento*/}
-          <ToggleButton onClick={ props.clicked } toggled={ toggled }>Toggle persons</ToggleButton>
+          <ToggleButton 
+            onClick={ props.clicked } 
+            ref={ cockpitBtnRef } 
+            toggled={ toggled }
+          >
+              Toggle persons
+          </ToggleButton>
       </div>
       
       
